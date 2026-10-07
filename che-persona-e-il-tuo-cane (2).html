@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Che persona è il tuo cane?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --cream: #F7F3EC;
+    --bark: #3D5A47;
+    --moss: #4A5E40;
+    --amber: #C8873A;
+    --paw: #D8E8DC;
+    --text: #1A2A1F;
+    --muted: #6A8470;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  #screen-intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    background: var(--bark);
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #screen-intro::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: rgba(200,135,58,0.12);
+    top: -200px; right: -200px;
+  }
+
+  #screen-intro::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(200,135,58,0.08);
+    bottom: -150px; left: -100px;
+  }
+
+  .paw-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 7vw, 68px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 8px;
+  }
+
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 3vw, 20px);
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 32px;
+  }
+
+  .hero-desc {
+    max-width: 480px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(247,243,236,0.75);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 48px;
+  }
+
+  .btn-start {
+    background: var(--amber);
+    color: white;
+    border: none;
+    padding: 18px 48px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .btn-start:hover {
+    background: #d4953f;
+    transform: translateY(-2px);
+  }
+
+  .disclaimer {
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+    font-size: 12px;
+    color: rgba(247,243,236,0.4);
+  }
+
+  /* GENDER SCREEN */
+  #screen-gender {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px 24px;
+    text-align: center;
+    background: var(--cream);
+  }
+
+  .gender-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--bark);
+    margin-bottom: 12px;
+  }
+
+  .gender-sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .gender-btns {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .gender-btn {
+    background: white;
+    border: 2px solid var(--paw);
+    padding: 32px 48px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 160px;
+  }
+
+  .gender-btn:hover {
+    border-color: var(--amber);
+    background: #fdf9f4;
+    transform: translateY(-3px);
+  }
+
+  .gender-emoji { font-size: 48px; }
+
+  /* QUIZ */
+  #screen-quiz {
+    display: none;
+    min-height: 100vh;
+    padding: 40px 24px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .progress-wrap { margin-bottom: 48px; }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--paw);
+    border-radius: 2px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--amber);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .question-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--bark);
+    margin-bottom: 40px;
+  }
+
+  .options-grid { display: grid; gap: 12px; }
+
+  .option-btn {
+    background: white;
+    border: 2px solid var(--paw);
+    padding: 20px 24px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .option-btn:hover {
+    border-color: var(--amber);
+    background: #fdf9f4;
+    transform: translateX(4px);
+  }
+
+  .option-btn.selected {
+    border-color: var(--bark);
+    background: var(--bark);
+    color: var(--cream);
+  }
+
+  .option-letter {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--amber);
+    min-width: 20px;
+    margin-top: 1px;
+  }
+
+  .btn-next {
+    margin-top: 32px;
+    background: var(--bark);
+    color: var(--cream);
+    border: none;
+    padding: 16px 40px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .btn-next.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .btn-next:hover {
+    background: var(--amber);
+    transform: translateY(-2px);
+  }
+
+  /* RESULT */
+  #screen-result { display: none; min-height: 100vh; }
+
+  .result-hero {
+    background: var(--bark);
+    color: var(--cream);
+    padding: 60px 24px 40px;
+    text-align: center;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+
+  .result-sei {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 700;
+    color: rgba(247,243,236,0.6);
+    margin-bottom: 8px;
+  }
+
+  .result-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 9vw, 80px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: 16px;
+  }
+
+  .result-archetype {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 40px;
+  }
+
+  .result-image-wrap {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: 0 auto;
+    border: 4px solid var(--amber);
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    line-height: 1;
+  }
+
+  .result-body {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 24px 60px;
+  }
+
+  .result-desc {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 48px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  .result-traits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .trait {
+    background: white;
+    border-left: 3px solid var(--amber);
+    padding: 16px 20px;
+  }
+
+  .trait-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .trait-bar-wrap {
+    height: 4px;
+    background: var(--paw);
+    border-radius: 2px;
+  }
+
+  .trait-bar {
+    height: 100%;
+    background: var(--amber);
+    border-radius: 2px;
+  }
+
+  .btn-share {
+    display: block;
+    width: 100%;
+    background: #1877F2;
+    color: white;
+    border: none;
+    padding: 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: background 0.2s;
+  }
+
+  .btn-share:hover { background: #1565d8; }
+
+  .btn-retry {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--bark);
+    border: 2px solid var(--bark);
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+
+  .btn-retry:hover {
+    background: var(--bark);
+    color: var(--cream);
+  }
+
+  .btn-other-quiz {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--amber);
+    border: 2px solid var(--amber);
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .btn-other-quiz:hover {
+    background: var(--amber);
+    color: white;
+  }
+
+  @media (max-width: 480px) {
+    .result-traits { grid-template-columns: 1fr; }
+    .result-name { letter-spacing: -1px; }
+    .gender-btns { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="screen-intro">
+  <div class="paw-icon">🐾</div>
+  <div class="hero-title">Che persona è il tuo cane?</div>
+  <div class="hero-sub">Il quiz del carattere capovolto</div>
+  <p class="hero-desc">Sette domande sul tuo cane. Scopri che tipo umano si nasconde sotto quel pelo.</p>
+  <button class="btn-start" onclick="startGender()">Inizia adesso</button>
+  <p class="disclaimer">Gratuito · Nessuna email richiesta · Solo divertimento</p>
+</div>
+
+<!-- GENDER -->
+<div id="screen-gender">
+  <div class="gender-title">Prima di tutto —</div>
+  <div class="gender-sub">Il tuo cane è maschio o femmina?</div>
+  <div class="gender-btns">
+    <button class="gender-btn" onclick="setGender('m')">
+      <span class="gender-emoji">🐕</span>
+      <span>Maschio</span>
+    </button>
+    <button class="gender-btn" onclick="setGender('f')">
+      <span class="gender-emoji">🐩</span>
+      <span>Femmina</span>
+    </button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz">
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="progress-text">Domanda 1 di 7</span>
+      <span id="progress-pct">14%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
+  </div>
+  <div class="question-number" id="q-number">01 / 07</div>
+  <div class="question-text" id="q-text"></div>
+  <div class="options-grid" id="q-options"></div>
+  <button class="btn-next" id="btn-next" onclick="nextQuestion()">Avanti →</button>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result">
+  <div class="result-hero">
+    <div class="result-label">Il tuo cane è</div>
+    <div class="result-sei" id="r-sei"></div>
+    <div class="result-name" id="r-name"></div>
+    <div class="result-archetype" id="r-archetype"></div>
+    <div class="result-image-wrap" id="r-image"></div>
+  </div>
+  <div class="result-body">
+    <p class="result-desc" id="r-desc"></p>
+    <div class="result-traits" id="r-traits"></div>
+    <button class="btn-share" onclick="shareOnFacebook()">Condividi su Facebook</button>
+    <button class="btn-retry" onclick="resetQuiz()">Rifai il quiz</button>
+    <button class="btn-other-quiz" onclick="goToOtherQuiz()">Scopri anche che cane sei tu →</button>
+  </div>
+</div>
+
+<script>
+let dogGender = 'm';
+let currentQ = 0;
+let totalScores = { S: 0, E: 0, St: 0, F: 0 };
+let selectedOption = null;
+
+const questions = [
+  {
+    text: "Come reagisce il tuo cane a uno sconosciuto che entra in casa?",
+    options: [
+      { text: "Festa totale — è il migliore amico del mondo dopo tre secondi.", scores: { S: 4, E: 3, St: 0, F: 0 } },
+      { text: "Annusa, valuta, poi decide se fidarsi.", scores: { S: 2, E: 2, St: 2, F: 0 } },
+      { text: "Si mette in mezzo e osserva finché non capisce le intenzioni.", scores: { S: 1, E: 2, St: 3, F: 3 } },
+      { text: "Abbaia, avvisa, non molla finché non si sente sicuro.", scores: { S: 1, E: 3, St: 0, F: 4 } }
+    ]
+  },
+  {
+    text: "Cosa fa il tuo cane quando sei fuori casa?",
+    options: [
+      { text: "Dorme. Tranquillo, senza drammi.", scores: { S: 0, E: 1, St: 2, F: 0 } },
+      { text: "Aspetta davanti alla porta o alla finestra.", scores: { S: 3, E: 1, St: 3, F: 2 } },
+      { text: "Esplora, annusa, fa cose per conto suo.", scores: { S: 1, E: 3, St: 1, F: 0 } },
+      { text: "Si dispera — vuole stare sempre con te.", scores: { S: 4, E: 4, St: 0, F: 1 } }
+    ]
+  },
+  {
+    text: "Come si comporta il tuo cane durante una passeggiata?",
+    options: [
+      { text: "Tira sempre, vuole andare ovunque e subito.", scores: { S: 2, E: 4, St: 1, F: 2 } },
+      { text: "Annusa tutto meticolosamente — ogni metro è un'indagine.", scores: { S: 0, E: 2, St: 3, F: 0 } },
+      { text: "Cammina al fianco, guarda te per capire dove si va.", scores: { S: 3, E: 2, St: 4, F: 2 } },
+      { text: "Va per i fatti suoi, torna quando vuole.", scores: { S: 1, E: 3, St: 1, F: 3 } }
+    ]
+  },
+  {
+    text: "Come reagisce il tuo cane quando stai male o sei triste?",
+    options: [
+      { text: "Si avvicina, si appoggia a te, non si muove.", scores: { S: 3, E: 1, St: 2, F: 1 } },
+      { text: "Ti porta un giocattolo — vuole tirarti su.", scores: { S: 4, E: 3, St: 0, F: 1 } },
+      { text: "Ti guarda da lontano con aria seria, poi si avvicina piano.", scores: { S: 2, E: 1, St: 3, F: 2 } },
+      { text: "Continua i fatti suoi — ma rimane vicino senza che tu lo noti.", scores: { S: 1, E: 2, St: 2, F: 3 } }
+    ]
+  },
+  {
+    text: "Come si comporta il tuo cane con gli altri cani?",
+    options: [
+      { text: "Vuole giocare con tutti, nessuno escluso.", scores: { S: 4, E: 4, St: 0, F: 0 } },
+      { text: "Selettivo — alcuni sì, altri no, e la scelta è definitiva.", scores: { S: 1, E: 2, St: 3, F: 2 } },
+      { text: "Cerca di capire chi comanda, poi si posiziona.", scores: { S: 2, E: 2, St: 2, F: 4 } },
+      { text: "Preferisce stare per conto suo.", scores: { S: 1, E: 1, St: 2, F: 3 } }
+    ]
+  },
+  {
+    text: "Come reagisce il tuo cane davanti a un ostacolo o a qualcosa che lo spaventa?",
+    options: [
+      { text: "Si ferma, abbaia, non passa finché non capisce.", scores: { S: 0, E: 3, St: 2, F: 3 } },
+      { text: "Si nasconde dietro di te — sei il suo scudo.", scores: { S: 4, E: 1, St: 1, F: 1 } },
+      { text: "Ci gira intorno, studia la situazione, poi decide.", scores: { S: 0, E: 2, St: 3, F: 2 } },
+      { text: "Va dritto — la paura non sembra nel suo vocabolario.", scores: { S: 1, E: 4, St: 1, F: 4 } }
+    ]
+  },
+  {
+    text: "Qual è la cosa che descrive meglio il tuo cane?",
+    options: [
+      { text: "È sempre felice — ogni cosa è meravigliosa.", scores: { S: 4, E: 4, St: 1, F: 0 } },
+      { text: "È serio — ti guarda come se capisse tutto.", scores: { S: 2, E: 1, St: 3, F: 3 } },
+      { text: "È un capo — gli altri cani lo seguono.", scores: { S: 2, E: 3, St: 2, F: 4 } },
+      { text: "È un'anima libera — non appartiene a nessuno davvero.", scores: { S: 1, E: 3, St: 1, F: 2 } }
+    ]
+  }
+];
+
+const archetypes = [
+  {
+    nameM: "Il Professore", nameF: "La Professoressa",
+    archM: "L'osservatore silenzioso", archF: "L'osservatrice silenziosa",
+    emoji: "🎓",
+    descM: "Osserva tutto, giudica in silenzio, sa sempre la risposta ma aspetta che tu la cerchi da solo. Ha una dignità naturale che mette tutti un po' in soggezione.",
+    descF: "Osserva tutto, giudica in silenzio, sa sempre la risposta ma aspetta che tu la cerchi da solo. Ha una dignità naturale che mette tutti un po' in soggezione.",
+    profile: { S: 2, E: 1, St: 3, F: 2 }
+  },
+  {
+    nameM: "Il Manager", nameF: "La Manager",
+    archM: "Il organizzatore nato", archF: "L'organizzatrice nata",
+    emoji: "📋",
+    descM: "Organizza, controlla, tiene tutto sotto occhio — anche quando non ce n'è bisogno. Vive per la struttura e per sapere esattamente dove sei in ogni momento.",
+    descF: "Organizza, controlla, tiene tutto sotto occhio — anche quando non ce n'è bisogno. Vive per la struttura e per sapere esattamente dove sei in ogni momento.",
+    profile: { S: 3, E: 2, St: 4, F: 3 }
+  },
+  {
+    nameM: "Il Bambino Eterno", nameF: "La Bambina Eterna",
+    archM: "Lo spirito sempre giovane", archF: "Lo spirito sempre giovane",
+    emoji: "🎈",
+    descM: "Tutto è un gioco, tutto è adesso. Il passato non esiste e il futuro neanche. Riesce a trovare entusiasmo nelle stesse cose ogni singolo giorno.",
+    descF: "Tutto è un gioco, tutto è adesso. Il passato non esiste e il futuro neanche. Riesce a trovare entusiasmo nelle stesse cose ogni singolo giorno.",
+    profile: { S: 4, E: 4, St: 1, F: 0 }
+  },
+  {
+    nameM: "Il Filosofo", nameF: "La Filosofa",
+    archM: "Il pensatore contemplativo", archF: "La pensatrice contemplativa",
+    emoji: "🔭",
+    descM: "Sta fermo e guarda il mondo con un'espressione che dice: ho capito tutto ma non ve lo dico. Lento, profondo, e inspiegabilmente affascinante.",
+    descF: "Sta ferma e guarda il mondo con un'espressione che dice: ho capito tutto ma non ve lo dico. Lenta, profonda, e inspiegabilmente affascinante.",
+    profile: { S: 1, E: 1, St: 2, F: 2 }
+  },
+  {
+    nameM: "Il Nonno Saggio", nameF: "La Nonna Saggia",
+    archM: "La presenza rassicurante", archF: "La presenza rassicurante",
+    emoji: "🌿",
+    descM: "Lento, solido, rassicurante. Sa aspettare. Ha visto abbastanza da non stupirsi più di niente — e quella calma si trasmette a chi gli sta vicino.",
+    descF: "Lenta, solida, rassicurante. Sa aspettare. Ha visto abbastanza da non stupirsi più di niente — e quella calma si trasmette a chi le sta vicino.",
+    profile: { S: 2, E: 1, St: 3, F: 3 }
+  },
+  {
+    nameM: "Il Ribelle", nameF: "La Ribelle",
+    archM: "Lo spirito indomabile", archF: "Lo spirito indomabile",
+    emoji: "⚡",
+    descM: "Non segue le regole. Non perché non le capisca — perché ha deciso che non lo riguardano. Fa sempre quello che vuole, e in qualche modo gli riesce.",
+    descF: "Non segue le regole. Non perché non le capisca — perché ha deciso che non la riguardano. Fa sempre quello che vuole, e in qualche modo le riesce.",
+    profile: { S: 1, E: 3, St: 1, F: 3 }
+  },
+  {
+    nameM: "L'Artista", nameF: "L'Artista",
+    archM: "L'anima sensibile", archF: "L'anima sensibile",
+    emoji: "🎨",
+    descM: "Sensibile, imprevedibile, capace di grande intensità. Vive di emozioni più che di logica. Percepisce cose che gli altri non notano nemmeno.",
+    descF: "Sensibile, imprevedibile, capace di grande intensità. Vive di emozioni più che di logica. Percepisce cose che gli altri non notano nemmeno.",
+    profile: { S: 2, E: 3, St: 1, F: 2 }
+  },
+  {
+    nameM: "Il Bodyguard", nameF: "La Bodyguard",
+    archM: "Il protettore silenzioso", archF: "La protettrice silenziosa",
+    emoji: "🛡️",
+    descM: "Presente, silenzioso, vigile. Il suo lavoro è proteggerti e lo prende molto sul serio. Non si muove mai davvero — è sempre in ascolto.",
+    descF: "Presente, silenziosa, vigile. Il suo lavoro è proteggerti e lo prende molto sul serio. Non si muove mai davvero — è sempre in ascolto.",
+    profile: { S: 2, E: 2, St: 3, F: 4 }
+  },
+  {
+    nameM: "Il Comico", nameF: "La Comica",
+    archM: "Lo showman nato", archF: "La showgirl nata",
+    emoji: "🎭",
+    descM: "Tutto diventa uno spettacolo. Cerca sempre il pubblico, muore senza attenzione. Se ridi, ha vinto. Se non ridi, si impegna di più.",
+    descF: "Tutto diventa uno spettacolo. Cerca sempre il pubblico, muore senza attenzione. Se ridi, ha vinto. Se non ridi, si impegna di più.",
+    profile: { S: 4, E: 4, St: 1, F: 1 }
+  },
+  {
+    nameM: "L'Esploratore", nameF: "L'Esploratrice",
+    archM: "Il curioso instancabile", archF: "La curiosa instancabile",
+    emoji: "🧭",
+    descM: "Deve vedere cosa c'è oltre la curva. Sempre. Non è irrequietezza — è vocazione. Il mondo è un posto enorme e lui intende visitarlo tutto.",
+    descF: "Deve vedere cosa c'è oltre la curva. Sempre. Non è irrequietezza — è vocazione. Il mondo è un posto enorme e lei intende visitarlo tutto.",
+    profile: { S: 2, E: 4, St: 1, F: 2 }
+  },
+  {
+    nameM: "Il Diplomatico", nameF: "La Diplomatica",
+    archM: "Il mediatore nato", archF: "La mediatrice nata",
+    emoji: "🕊️",
+    descM: "Vuole che tutti stiano bene. Mediatore nato, odia i conflitti, trova sempre la via di mezzo. È il tipo che mette pace — e ci riesce davvero.",
+    descF: "Vuole che tutti stiano bene. Mediatrice nata, odia i conflitti, trova sempre la via di mezzo. È il tipo che mette pace — e ci riesce davvero.",
+    profile: { S: 4, E: 2, St: 2, F: 1 }
+  },
+  {
+    nameM: "Il Divo", nameF: "La Diva",
+    archM: "La star consapevole", archF: "La star consapevole",
+    emoji: "✨",
+    descM: "Sa di essere bello. Lo sa e basta. Non è arroganza — è consapevolezza estetica. Si muove come se qualcuno lo stesse sempre fotografando.",
+    descF: "Sa di essere bella. Lo sa e basta. Non è arroganza — è consapevolezza estetica. Si muove come se qualcuno la stesse sempre fotografando.",
+    profile: { S: 3, E: 2, St: 2, F: 3 }
+  },
+  {
+    nameM: "Il Detective", nameF: "La Detective",
+    archM: "L'investigatore nato", archF: "L'investigatrice nata",
+    emoji: "🔍",
+    descM: "Annusa, osserva, registra tutto. Niente gli sfugge. Trae conclusioni prima degli altri e di solito ha ragione.",
+    descF: "Annusa, osserva, registra tutto. Niente le sfugge. Trae conclusioni prima degli altri e di solito ha ragione.",
+    profile: { S: 1, E: 2, St: 3, F: 2 }
+  },
+  {
+    nameM: "Il Guerriero", nameF: "La Guerriera",
+    archM: "Il coraggioso determinato", archF: "La coraggiosa determinata",
+    emoji: "⚔️",
+    descM: "Determinato, coraggioso, non si tira mai indietro. La paura non è nel suo vocabolario. Affronta ogni cosa con la stessa intensità.",
+    descF: "Determinata, coraggiosa, non si tira mai indietro. La paura non è nel suo vocabolario. Affronta ogni cosa con la stessa intensità.",
+    profile: { S: 1, E: 4, St: 2, F: 4 }
+  }
+];
+
+function startGender() {
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-gender').style.display = 'flex';
+}
+
+function setGender(g) {
+  dogGender = g;
+  document.getElementById('screen-gender').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const letters = ['A', 'B', 'C', 'D'];
+  const pct = Math.round(((currentQ + 1) / questions.length) * 100);
+
+  document.getElementById('progress-text').textContent = `Domanda ${currentQ + 1} di ${questions.length}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-number').textContent = String(currentQ + 1).padStart(2, '0') + ' / 07';
+  document.getElementById('q-text').textContent = q.text;
+
+  const container = document.getElementById('q-options');
+  container.innerHTML = '';
+  selectedOption = null;
+  document.getElementById('btn-next').classList.remove('visible');
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOption(i, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(index, btn) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOption = index;
+  document.getElementById('btn-next').classList.add('visible');
+}
+
+function nextQuestion() {
+  if (selectedOption === null) return;
+  const scores = questions[currentQ].options[selectedOption].scores;
+  Object.keys(scores).forEach(k => totalScores[k] += scores[k]);
+  currentQ++;
+  if (currentQ < questions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+
+  const result = computeResult();
+  const isFem = dogGender === 'f';
+
+  document.getElementById('r-sei').textContent = isFem ? 'una vera' : 'un vero';
+  document.getElementById('r-name').textContent = isFem ? result.nameF : result.nameM;
+  document.getElementById('r-archetype').textContent = isFem ? result.archF : result.archM;
+  document.getElementById('r-desc').textContent = isFem ? result.descF : result.descM;
+
+  const imgWrap = document.getElementById('r-image');
+  imgWrap.textContent = result.emoji;
+
+  const axes = [
+    { label: 'Socialità', key: 'S' },
+    { label: 'Energia', key: 'E' },
+    { label: 'Struttura', key: 'St' },
+    { label: 'Determinazione', key: 'F' }
+  ];
+
+  const traitsEl = document.getElementById('r-traits');
+  traitsEl.innerHTML = '';
+  axes.forEach(ax => {
+    const pct = Math.round((result.profile[ax.key] / 4) * 100);
+    traitsEl.innerHTML += `
+      <div class="trait">
+        <div class="trait-label">${ax.label}</div>
+        <div class="trait-bar-wrap"><div class="trait-bar" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  window.scrollTo(0, 0);
+}
+
+function computeResult() {
+  // Normalizza i punteggi su [0,1] — ogni asse va da 0 a ~4
+  // I profili sono su scala 1-4: normalizziamo entrambi su [0,1]
+  const normS  = Math.min(totalScores.S  / 4, 1);
+  const normE  = Math.min(totalScores.E  / 4, 1);
+  const normSt = Math.min(totalScores.St / 4, 1);
+  const normF  = Math.min(totalScores.F  / 4, 1);
+
+  let best = null;
+  let bestDist = Infinity;
+
+  archetypes.forEach(a => {
+    const bS  = (a.profile.S  - 1) / 3;
+    const bE  = (a.profile.E  - 1) / 3;
+    const bSt = (a.profile.St - 1) / 3;
+    const bF  = (a.profile.F  - 1) / 3;
+
+    // Distanza euclidea su 4 dimensioni normalizzate
+    const dist = Math.sqrt(
+      Math.pow(normS  - bS,  2) +
+      Math.pow(normE  - bE,  2) +
+      Math.pow(normSt - bSt, 2) +
+      Math.pow(normF  - bF,  2)
+    );
+
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = a;
+    }
+  });
+
+  return best;
+}
+
+function shareOnFacebook() {
+  const isFem = dogGender === 'f';
+  const name = isFem
+    ? document.getElementById('r-name').textContent
+    : document.getElementById('r-name').textContent;
+  const text = encodeURIComponent(`Ho fatto il quiz "Che persona è il tuo cane?" — il mio è ${name}! Scopri anche tu 🐾`);
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${text}`, '_blank');
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  totalScores = { S: 0, E: 0, St: 0, F: 0 };
+  selectedOption = null;
+  dogGender = 'm';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+
+function goToOtherQuiz() {
+  alert('Carica il file "che-cane-sei.html" per scoprire che cane sei tu!');
+}
+</script>
+</body>
+</html>
